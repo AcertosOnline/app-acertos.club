@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados e palpites em Tempo Real</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 20px;
+            background-color: #F3F3F3;
+            color: #1F1F1F;
+        }
+        h1 {
+            text-align: center;
+            color: #0F6CBD;
+            font-weight: 600;
+        }
+        #menu, #site-content {
+            display: block;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+        .card {
+            border: none;
+            padding: 16px;
+            width: 200px;
+            cursor: pointer;
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: #1F1F1F;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            background-color: #F9F9F9;
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: #0F6CBD;
+            font-weight: 500;
+        }
+        .card p {
+            margin: 5px 0;
+            color: #505050;
+        }
+        .card-image {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: #FFFFFF;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        .card-image h3 {
+            color: inherit;
+        }
+        .site-section {
+            margin-bottom: 24px;
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .table-container {
+            display: flex;
+            flex-direction: column;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #FFFFFF;
+            border-radius: 6px;
+            overflow: hidden;
+            font-size: 0.85em;
+        }
+        th, td {
+            border: 1px solid #E5E5E5;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #F5F6F5;
+            color: #1F1F1F;
+            font-weight: 600;
+        }
+        .table-title {
+            margin: 0 0 8px 0;
+            font-size: 1em;
+            color: #0F6CBD;
+            font-weight: 500;
+        }
+        .result-date {
+            font-size: 0.8em;
+            color: #505050;
+            margin-bottom: 6px;
+        }
+        .timestamp {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .error {
+            color: #D13438;
+        }
+        .milhar { color: #107C10; font-weight: bold; }
+        .centena { color: #0F6CBD; }
+        .dezena { color: #D83B01; }
+        .tabs {
+            overflow: hidden;
+            background-color: #F5F6F5;
+            border-radius: 8px 8px 0 0;
+            margin-top: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .tabs button {
+            background-color: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 12px 16px;
+            transition: background-color 0.2s;
+            color: #1F1F1F;
+            font-weight: 500;
+            flex-grow: 1;
+            text-align: center;
+        }
+        .tabs button:hover {
+            background-color: #E5E5E5;
+        }
+        .tabs button.active {
+            background-color: #FFFFFF;
+            border-bottom: 2px solid #0F6CBD;
+        }
+        .tabcontent {
+            display: none;
+            padding: 12px 16px;
+            border: 1px solid #E5E5E5;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            background-color: #FFFFFF;
+        }
+        #site-content {
+            display: none;
+        }
+        #back-to-menu {
+            margin-bottom: 12px;
+            cursor: pointer;
+            color: #0F6CBD;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        #back-to-menu:hover {
+            color: #094A8C;
+            text-decoration: underline;
+        }
+        .comparison-date {
+            font-size: 0.8em;
+            color: #757575;
+            margin-left: 10px;
+        }
+        .guesses-info {
+            font-size: 0.9em;
+            color: #505050;
+            margin-bottom: 10px;
+        }
+
+        /* Media Queries para Responsividade */
+        @media (max-width: 1024px) {
+            .table-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card, .card-image {
+                width: 180px;
+            }
+            body {
+                margin: 15px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table-grid {
+                grid-template-columns: 1fr;
+            }
+            .card, .card-image {
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            .card-container {
+                gap: 12px;
+            }
+            .site-section {
+                padding: 12px;
+            }
+            table {
+                font-size: 0.8em;
+            }
+            th, td {
+                padding: 4px;
+            }
+            .table-title {
+                font-size: 0.9em;
+            }
+            .result-date {
+                font-size: 0.75em;
+            }
+            .tabs button {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            body {
+                margin: 10px;
+            }
+            h1 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Resultados e palpites em Tempo Real</h1>
+    <div id="menu">
+        <div class="card-container" id="card-container">Carregando...</div>
+    </div>
+    <div id="site-content">
+        <div id="back-to-menu">Voltar ao Menu</div>
+        <div id="site-details"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzfVgBrOpQNUFoEp23py2otIerdoyM7dk",
+            authDomain: "acertos-online-9f959.firebaseapp.com",
+            databaseURL: "https://acertos-online-9f959-default-rtdb.firebaseio.com",
+            projectId: "acertos-online-9f959"
+        };
+
+        console.log("Iniciando carregamento da página...");
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            console.log("Firebase inicializado com sucesso");
+            const db = getDatabase(app);
+            initApp(db);
+        } catch (error) {
+            console.error("Erro ao inicializar Firebase:", error);
+            document.getElementById('menu').innerHTML = `<p class="error">Erro ao conectar ao Firebase: ${error.message}</p>`;
+        }
+
+        function initApp(db) {
+            console.log("Inicializando aplicativo...");
+            const menuDiv = document.getElementById('menu');
+            const siteContentDiv = document.getElementById('site-content');
+            const siteDetailsDiv = document.getElementById('site-details');
+            const backToMenu = document.getElementById('back-to-menu');
+            const cardContainer = document.getElementById('card-container');
+            const sites = [
+                "Maluca Bahia", "Paratodos Bahia", "Lotece Ceara", "Look Loterias",
+                "Lotep PB", "PT Rio", "PT SP", "Loteria Nacional"
+            ];
+
+            let siteData = {};
+            let currentSite = null; // Variável para rastrear o site atual
+
+            let debounceTimeout;
+            function debounce(func, wait) {
+                return function(...args) {
+                    clearTimeout(debounceTimeout);
+                    debounceTimeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+            const debouncedRenderMenu = debounce(renderMenu, 100);
+
+            sites.forEach(site => {
+                console.log(`Configurando listener para ${site}...`);
+                const siteRef = ref(db, `tables/${site}`);
+                onValue(siteRef, (snapshot) => {
+                    const data = snapshot.val();
+                    console.log(`Dados recebidos para ${site}:`, data);
+                    siteData[site] = data || {};
+                    debouncedRenderMenu();
+                    updateTabs(site); // Atualiza as abas em tempo real
+                }, (error) => {
+                    console.error(`Erro ao carregar ${site}:`, error);
+                    siteData[site] = {};
+                    debouncedRenderMenu();
+                    updateTabs(site);
+                });
+            });
+
+            function renderMenu() {
+                console.log("Renderizando menu...", siteData);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const sortedSites = sites.sort((a, b) => {
+                    const aComp = (siteData[a]?.comparisons || []).filter(c => {
+                        const compDate = new Date(c.timestamp);
+                        compDate.setHours(0, 0, 0, 0);
+                        return compDate.getTime() === today.getTime();
+                    }).map(c => c.text);
+                    const bComp = (siteData[b]?.comparisons || []).filter(c => {
+                        const compDate = new Date(c.timestamp);
+                        compDate.setHours(0, 0, 0, 0);
+                        return compDate.getTime() === today.getTime();
+                    }).map(c => c.text);
+                    const aMilhar = aComp.filter(c => c.includes("Milhar")).length;
+                    const bMilhar = bComp.filter(c => c.includes("Milhar")).length;
+                    const aCentena = aComp.filter(c => c.includes("Centena")).length;
+                    const bCentena = bComp.filter(c => c.includes("Centena")).length;
+                    const aDezena = aComp.filter(c => c.includes("Dezena")).length;
+                    const bDezena = bComp.filter(c => c.includes("Dezena")).length;
+
+                    if (aMilhar !== bMilhar) return bMilhar - aMilhar;
+                    if (aCentena !== bCentena) return bCentena - aCentena;
+                    return bDezena - aDezena;
+                });
+
+                const fragment = document.createDocumentFragment();
+
+                sortedSites.forEach(site => {
+                    const todayComparisons = (siteData[site]?.comparisons || []).filter(c => {
+                        const compDate = new Date(c.timestamp);
+                        compDate.setHours(0, 0, 0, 0);
+                        return compDate.getTime() === today.getTime();
+                    }).map(c => c.text);
+                    const milharCount = todayComparisons.filter(c => c.includes("Milhar")).length;
+                    const centenaCount = todayComparisons.filter(c => c.includes("Centena")).length;
+                    const dezenaCount = todayComparisons.filter(c => c.includes("Dezena")).length;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <h3>${site}</h3>
+                        <p>Milhar: ${milharCount}</p>
+                        <p>Centena: ${centenaCount}</p>
+                        <p>Dezena: ${dezenaCount}</p>
+                    `;
+                    card.onclick = () => showSite(site);
+                    fragment.appendChild(card);
+                });
+
+                const aguiaCard = document.createElement('div');
+                aguiaCard.className = 'card card-image';
+                aguiaCard.style.backgroundImage = "url('aguiaoficial.webp')";
+                aguiaCard.innerHTML = `<h3>Banca Águia Oficial</h3>`;
+                aguiaCard.onclick = () => window.open('https://app.aguia-oficial.com/', '_blank');
+                fragment.appendChild(aguiaCard);
+
+                const acertosCard = document.createElement('div');
+                acertosCard.className = 'card card-image';
+                acertosCard.style.backgroundImage = "url('acertosclub.webp')";
+                acertosCard.innerHTML = `<h3>Banca Acertos Club</h3>`;
+                acertosCard.onclick = () => window.open('https://app.acertosonline.com/', '_blank');
+                fragment.appendChild(acertosCard);
+
+                cardContainer.innerHTML = '';
+                cardContainer.appendChild(fragment);
+            }
+
+            function createTable(headers, rows) {
+                let tableHtml = `<table><thead><tr>`;
+                headers.forEach(header => {
+                    tableHtml += `<th>${header || 'N/A'}</th>`;
+                });
+                tableHtml += `</tr></thead><tbody>`;
+                rows.forEach(row => {
+                    tableHtml += `<tr>`;
+                    row.forEach(cell => {
+                        tableHtml += `<td>${cell || ''}</td>`;
+                    });
+                    tableHtml += `</tr>`;
+                });
+                tableHtml += `</tbody></table>`;
+                return tableHtml;
+            }
+
+            function filterGuesses(guesses) {
+                const milhar = [...new Set(guesses || [])];
+                const centena = [...new Set((guesses || []).map(g => g.slice(1)))];
+                const dezena = [...new Set((guesses || []).map(g => g.slice(2)))];
+                return { milhar, centena, dezena };
+            }
+
+            function sortComparisons(comparisons) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+
+                return (comparisons || []).map(comp => {
+                    const compDate = new Date(comp.timestamp);
+                    compDate.setHours(0, 0, 0, 0);
+                    let dateLabel = '';
+                    const compTime = compDate.getTime();
+                    if (compTime === today.getTime()) {
+                        dateLabel = 'Hoje';
+                    } else if (compTime === yesterday.getTime()) {
+                        dateLabel = 'Ontem';
+                    }
+                    return { text: comp.text, dateLabel };
+                }).sort((a, b) => {
+                    if (a.text.includes("Milhar") && !b.text.includes("Milhar")) return -1;
+                    if (!a.text.includes("Milhar") && b.text.includes("Milhar")) return 1;
+                    if (a.text.includes("Centena") && !b.text.includes("Centena")) return -1;
+                    if (!a.text.includes("Centena") && b.text.includes("Centena")) return 1;
+                    return 0;
+                });
+            }
+
+            window.showSite = function(site) {
+                console.log(`Exibindo detalhes do site ${site}...`, siteData[site]);
+                currentSite = site; // Define o site atual
+                menuDiv.style.display = 'none';
+                siteContentDiv.style.display = 'block';
+                siteDetailsDiv.style.display = 'block';
+
+                const data = siteData[site] || {};
+
+                let html = `<h2>${site}</h2><p class="timestamp">Última atualização geral: ${data.lastUpdated || 'Desconhecida'}</p>`;
+                html += `
+                    <div class="tabs">
+                        <button class="tablinks" onclick="openTab(event, 'Results-${site}', '${site}')">Resultados</button>
+                        <button class="tablinks" onclick="openTab(event, 'Guesses-${site}', '${site}')">Palpites</button>
+                        <button class="tablinks" onclick="openTab(event, 'Comparisons-${site}', '${site}')">Correspondência</button>
+                    </div>
+                    <div id="Results-${site}" class="tabcontent site-section"></div>
+                    <div id="Guesses-${site}" class="tabcontent site-section"></div>
+                    <div id="Comparisons-${site}" class="tabcontent site-section"></div>
+                `;
+
+                siteDetailsDiv.innerHTML = html;
+                renderTabContent('Results', site, data);
+                document.getElementById(`Results-${site}`).style.display = 'block';
+                document.querySelector(`.tablinks[onclick*="Results-${site}"]`).classList.add('active');
+
+                if (data.guesses && data.guesses.length > 0) {
+                    renderTabContent('Guesses', site, data);
+                    // Ativar a aba "Milhar" por padrão
+                    document.getElementById(`Milhar-${site}`).style.display = 'block';
+                    document.querySelector(`.tablinks[onclick*="Milhar-${site}"]`).classList.add('active');
+                }
+            };
+
+            function renderTabContent(tab, site, data) {
+                const tabDiv = document.getElementById(`${tab}-${site}`);
+                // Removido "if (tabDiv.innerHTML) return;" para permitir atualizações em tempo real
+
+                if (tab === 'Results') {
+                    let html = '';
+                    if (data.titles && Object.keys(data.titles).length > 0) {
+                        const validTitles = Object.values(data.titles)
+                            .filter(titleData => titleData.latestData && titleData.latestData.length > 0)
+                            .reverse()
+                            .sort((a, b) => {
+                                const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(0);
+                                const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(0);
+                                return dateB - dateA;
+                            });
+
+                        if (validTitles.length > 0) {
+                            html = '<div class="table-grid">' + validTitles.map(titleData => {
+                                const lastUpdated = titleData.lastUpdated ? new Date(titleData.lastUpdated) : null;
+                                let dateStr = 'Data desconhecida';
+                                let dayOfWeek = '';
+                                let isToday = '';
+
+                                if (lastUpdated) {
+                                    const day = String(lastUpdated.getDate()).padStart(2, '0');
+                                    const month = String(lastUpdated.getMonth() + 1).padStart(2, '0');
+                                    const year = lastUpdated.getFullYear();
+                                    dateStr = `${day}/${month}/${year}`;
+                                    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+                                    dayOfWeek = daysOfWeek[lastUpdated.getDay()];
+                                    const today = new Date();
+                                    today.setHours(0, 0, 0, 0);
+                                    lastUpdated.setHours(0, 0, 0, 0);
+                                    isToday = (lastUpdated.getTime() === today.getTime()) ? ' (hoje)' : '';
+                                }
+
+                                const fixedHeaders = ["Prêmio", "Milhar", "Grupo", "Bicho"];
+                                const rows = titleData.latestData || [];
+
+                                return `
+                                    <div class="table-container">
+                                        <h3 class="table-title">${titleData.fixedTitle}</h3>
+                                        <p class="result-date">Resultado do dia ${dateStr}, ${dayOfWeek}${isToday}</p>
+                                        ${createTable(fixedHeaders, rows)}
+                                    </div>
+                                `;
+                            }).join('') + '</div>';
+                        } else {
+                            html = '<p>Nenhum resultado disponível</p>';
+                        }
+                    } else {
+                        html = '<p>Nenhum resultado disponível</p>';
+                    }
+                    tabDiv.innerHTML = html;
+                } else if (tab === 'Guesses') {
+                    let html = '';
+                    if (data.guesses && data.guesses.length > 0) {
+                        const { milhar, centena, dezena } = filterGuesses(data.guesses);
+                        let nextEmptyTitle = "próxima extração";
+                        if (data.titles && Object.keys(data.titles).length > 0) {
+                            const allTitles = Object.values(data.titles);
+                            const lastValidIndex = allTitles.map(t => t.latestData && t.latestData.length > 1).lastIndexOf(true);
+                            if (lastValidIndex !== -1 && lastValidIndex < allTitles.length - 1) {
+                                nextEmptyTitle = allTitles[lastValidIndex + 1].fixedTitle;
+                            }
+                        }
+
+                        const lastUpdated = data.lastUpdated ? new Date(data.lastUpdated) : null;
+                        let dateStr = '';
+                        let dayOfWeek = '';
+                        if (lastUpdated) {
+                            const day = String(lastUpdated.getDate()).padStart(2, '0');
+                            const month = String(lastUpdated.getMonth() + 1).padStart(2, '0');
+                            const year = lastUpdated.getFullYear();
+                            dateStr = `${day}/${month}/${year}`;
+                            const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+                            dayOfWeek = daysOfWeek[lastUpdated.getDay()];
+                        }
+
+                        const guessesText = nextEmptyTitle === "próxima extração" 
+                            ? "Palpites para a próxima extração"
+                            : `Palpites para a extração ${nextEmptyTitle} do dia ${dateStr}, ${dayOfWeek}`;
+
+                        html = `
+                            <p class="guesses-info">${guessesText}</p>
+                            <div class="tabs">
+                                <button class="tablinks" onclick="openSubTab(event, 'Milhar-${site}', '${site}')">Milhar</button>
+                                <button class="tablinks" onclick="openSubTab(event, 'Centena-${site}', '${site}')">Centena</button>
+                                <button class="tablinks" onclick="openSubTab(event, 'Dezena-${site}', '${site}')">Dezena</button>
+                            </div>
+                            <div id="Milhar-${site}" class="tabcontent">${milhar.join(', ')}</div>
+                            <div id="Centena-${site}" class="tabcontent">${centena.join(', ')}</div>
+                            <div id="Dezena-${site}" class="tabcontent">${dezena.join(', ')}</div>
+                        `;
+                    } else {
+                        html = '<p>Nenhum palpite disponível</p>';
+                    }
+                    tabDiv.innerHTML = html;
+                } else if (tab === 'Comparisons') {
+                    let html = '';
+                    if (data.comparisons && data.comparisons.length > 0) {
+                        const sortedComparisons = sortComparisons(data.comparisons);
+                        html = '<ul>' + sortedComparisons.map(comp => {
+                            const className = comp.text.includes("Milhar") ? 'milhar' : comp.text.includes("Centena") ? 'centena' : 'dezena';
+                            return `<li class="${className}">${comp.text}<span class="comparison-date">(${comp.dateLabel})</span></li>`;
+                        }).join('') + '</ul>';
+                    } else {
+                        html = '<p>Nenhuma comparação disponível</p>';
+                    }
+                    tabDiv.innerHTML = html;
+                }
+            }
+
+            function updateTabs(site) {
+                const data = siteData[site] || {};
+                if (document.getElementById('site-content').style.display === 'block' && site === currentSite) {
+                    renderTabContent('Results', site, data);
+                    renderTabContent('Guesses', site, data);
+                    renderTabContent('Comparisons', site, data);
+                    // Manter a aba ativa visível
+                    const activeTab = document.querySelector(`.tablinks.active[onclick*="${site}"]`);
+                    if (activeTab) {
+                        const tabName = activeTab.getAttribute('onclick').match(/'([^']+)'/)[1];
+                        document.getElementById(tabName).style.display = 'block';
+                    }
+                    // Manter a subaba ativa visível (para Guesses)
+                    const activeSubTab = document.querySelector(`.tablinks.active[onclick*="openSubTab"][onclick*="${site}"]`);
+                    if (activeSubTab) {
+                        const subTabName = activeSubTab.getAttribute('onclick').match(/'([^']+)'/)[1];
+                        document.getElementById(subTabName).style.display = 'block';
+                    }
+                }
+            }
+
+            backToMenu.onclick = function() {
+                menuDiv.style.display = 'block';
+                siteContentDiv.style.display = 'none';
+                currentSite = null; // Limpa o site atual ao voltar ao menu
+            };
+
+            window.openTab = function(evt, tabName, site) {
+                const tabcontent = document.getElementsByClassName('tabcontent');
+                for (let i = 0; i < tabcontent.length; i++) {
+                    if (tabcontent[i].id.includes(site) && !tabcontent[i].id.includes('Milhar') && !tabcontent[i].id.includes('Centena') && !tabcontent[i].id.includes('Dezena')) {
+                        tabcontent[i].style.display = "none";
+                    }
+                }
+                const tablinks = document.getElementsByClassName('tablinks');
+                for (let i = 0; i < tablinks.length; i++) {
+                    if (tablinks[i].getAttribute('onclick') && tablinks[i].getAttribute('onclick').includes(site) && !tablinks[i].getAttribute('onclick').includes('openSubTab')) {
+                        tablinks[i].className = tablinks[i].className.replace(" active", "");
+                    }
+                }
+                renderTabContent(tabName.split('-')[0], site, siteData[site]);
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+
+                // Ativar a aba "Milhar" por padrão ao abrir a aba "Guesses"
+                if (tabName === `Guesses-${site}` && siteData[site].guesses && siteData[site].guesses.length > 0) {
+                    document.getElementById(`Milhar-${site}`).style.display = 'block';
+                    const milharTab = document.querySelector(`.tablinks[onclick*="Milhar-${site}"]`);
+                    if (milharTab) milharTab.classList.add('active');
+                }
+            };
+
+            window.openSubTab = function(evt, tabName, site) {
+                const tabcontent = document.getElementsByClassName('tabcontent');
+                for (let i = 0; i < tabcontent.length; i++) {
+                    if (tabcontent[i].id.includes(site) && (tabcontent[i].id.includes('Milhar') || tabcontent[i].id.includes('Centena') || tabcontent[i].id.includes('Dezena'))) {
+                        tabcontent[i].style.display = "none";
+                    }
+                }
+                const tablinks = document.getElementsByClassName('tablinks');
+                for (let i = 0; i < tablinks.length; i++) {
+                    if (tablinks[i].getAttribute('onclick') && tablinks[i].getAttribute('onclick').includes(site) && tablinks[i].getAttribute('onclick').includes('openSubTab')) {
+                        tablinks[i].className = tablinks[i].className.replace(" active", "");
+                    }
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            };
+        }
+    </script>
+</body>
+</html>
