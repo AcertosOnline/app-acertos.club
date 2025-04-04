@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acertos Club</title>
+    <link rel="manifest" href="/manifest.json"> <!-- Link para o manifesto do PWA -->
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Estilo do botão móvel */
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            z-index: 1000;
+            touch-action: none;
+        }
+
+        /* Estilo do menu */
+        .floating-menu {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            width: 200px;
+            z-index: 1000;
+        }
+
+        .floating-menu.active {
+            display: flex;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            font-family: Arial, sans-serif;
+            border-bottom: 1px solid #eee;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .menu-item img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <iframe 
+        id="main-iframe"
+        src="https://app.acertos.club/pr/fC7hpda9"
+        allow="clipboard-read; clipboard-write; fullscreen"
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation allow-modals allow-downloads"
+        allowfullscreen
+        title="Acertos Club"
+    ></iframe>
+
+    <!-- Botão móvel -->
+    <div class="floating-button" id="floatingButton">+</div>
+
+    <!-- Menu flutuante -->
+    <div class="floating-menu" id="floatingMenu">
+        <button class="menu-item" id="addToHome">
+            <img src="/icons/pwa.svg" alt="PWA">
+            Adicionar à tela inicial
+        </button>
+        <a href="https://api.whatsapp.com/send?phone=+5583993708505&text=Ol%C3%A1%20Promotor,%20preciso%20de%20ajuda,%20meu%20c%C3%B3digo%20de%20unidade%20%C3%A9:%20242188" target="_blank" class="menu-item">
+            <img src="/icons/whats.svg" alt="WhatsApp">
+            Chame o promotor
+        </a>
+        <button class="menu-item" id="palpitesButton">
+            <img src="/icons/bicho.svg" alt="Palpites">
+            Palpites Jogo do Bicho
+        </button>
+        <button class="menu-item" id="casinoButton">
+            <img src="/icons/casino.svg" alt="Cassino">
+            Jogar no Cassino
+        </button>
+    </div>
+
+    <script>
+        const floatingButton = document.getElementById('floatingButton');
+        const floatingMenu = document.getElementById('floatingMenu');
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let deferredPrompt;
+
+        // Abre/fecha o menu ao clicar no botão
+        floatingButton.addEventListener('click', (e) => {
+            if (!isDragging) {
+                floatingMenu.classList.toggle('active');
+                e.stopPropagation(); // Impede que o clique no botão feche o menu imediatamente
+            }
+            isDragging = false;
+        });
+
+        // Funções para arrastar o botão
+        floatingButton.addEventListener('mousedown', startDraggingDesktop);
+        floatingButton.addEventListener('mousemove', dragDesktop);
+        floatingButton.addEventListener('mouseup', stopDragging);
+        floatingButton.addEventListener('touchstart', startDragging);
+        floatingButton.addEventListener('touchmove', drag);
+        floatingButton.addEventListener('touchend', stopDragging);
+
+        function startDraggingDesktop(e) {
+            initialX = e.clientX - currentX;
+            initialY = e.clientY - currentY;
+            isDragging = true;
+            floatingMenu.classList.remove('active');
+        }
+
+        function dragDesktop(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                currentX = Math.max(0, Math.min(currentX, window.innerWidth - floatingButton.offsetWidth));
+                currentY = Math.max(0, Math.min(currentY, window.innerHeight - floatingButton.offsetHeight));
+                floatingButton.style.left = currentX + 'px';
+                floatingButton.style.top = currentY + 'px';
+                floatingButton.style.right = 'auto';
+                floatingButton.style.bottom = 'auto';
+            }
+        }
+
+        function startDragging(e) {
+            initialX = e.touches[0].clientX - currentX;
+            initialY = e.touches[0].clientY - currentY;
+            isDragging = true;
+            floatingMenu.classList.remove('active');
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+                currentX = Math.max(0, Math.min(currentX, window.innerWidth - floatingButton.offsetWidth));
+                currentY = Math.max(0, Math.min(currentY, window.innerHeight - floatingButton.offsetHeight));
+                floatingButton.style.left = currentX + 'px';
+                floatingButton.style.top = currentY + 'px';
+                floatingButton.style.right = 'auto';
+                floatingButton.style.bottom = 'auto';
+            }
+        }
+
+        function stopDragging() {
+            isDragging = false;
+        }
+
+        // Posição inicial do botão
+        currentX = window.innerWidth - floatingButton.offsetWidth - 20;
+        currentY = window.innerHeight - floatingButton.offsetHeight - 20;
+        floatingButton.style.left = currentX + 'px';
+        floatingButton.style.top = currentY + 'px';
+
+        // Lógica para instalar o PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        document.getElementById('addToHome').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou instalar o PWA');
+                    } else {
+                        console.log('Usuário recusou instalar o PWA');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('A instalação do PWA não está disponível neste momento.');
+            }
+            floatingMenu.classList.remove('active');
+        });
+
+        // Abre a página /palpites em uma nova guia
+        document.getElementById('palpitesButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open('/palpites', '_blank');
+            floatingMenu.classList.remove('active');
+        });
+
+        // Lógica para "Jogar no Cassino"
+        document.getElementById('casinoButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            const message = 'Esta versão do Aplicativo não é compatível com os jogos do Cassino, para jogar nessa modalidade, clique OK para usar uma versão compatível!';
+            if (confirm(message)) {
+                window.location.href = 'https://app.acertos.club/pr/fC7hpda9';
+            }
+            floatingMenu.classList.remove('active');
+        });
+
+        // Fecha o menu ao clicar fora dele
+        document.addEventListener('click', (e) => {
+            if (floatingMenu.classList.contains('active') && 
+                !floatingMenu.contains(e.target) && 
+                !floatingButton.contains(e.target)) {
+                floatingMenu.classList.remove('active');
+            }
+        });
+
+        // Fecha o menu ao clicar em qualquer item (mantido como antes)
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                floatingMenu.classList.remove('active');
+            });
+        });
+
+        // Registro do Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(() => {
+                console.log('Service Worker registrado');
+            }).catch((error) => {
+                console.error('Erro ao registrar o Service Worker:', error);
+            });
+        }
+    </script>
+</body>
+</html>
