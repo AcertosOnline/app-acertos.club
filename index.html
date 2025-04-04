@@ -51,7 +51,7 @@
             display: none;
             flex-direction: column;
             width: 200px;
-            z-index: 1000;
+            z-index: 1001; /* Maior que o overlay */
         }
 
         .floating-menu.active {
@@ -86,6 +86,22 @@
             height: 20px;
             margin-right: 10px;
         }
+
+        /* Overlay invisível */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0); /* Transparente */
+            z-index: 1000; /* Abaixo do menu e botão */
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -98,25 +114,28 @@
         title="Acertos Club"
     ></iframe>
 
+    <!-- Overlay para capturar cliques fora -->
+    <div class="overlay" id="overlay"></div>
+
     <!-- Botão móvel -->
     <div class="floating-button" id="floatingButton">+</div>
 
     <!-- Menu flutuante -->
     <div class="floating-menu" id="floatingMenu">
         <button class="menu-item" id="addToHome">
-            <img src="/icons/pwa.svg" alt="PWA">
+            <img src="icons/pwa.svg" alt="PWA">
             Adicionar à tela inicial
         </button>
         <a href="https://api.whatsapp.com/send?phone=+5583993708505&text=Ol%C3%A1%20Promotor,%20preciso%20de%20ajuda,%20meu%20c%C3%B3digo%20de%20unidade%20%C3%A9:%20242188" target="_blank" class="menu-item">
-            <img src="/icons/whats.svg" alt="WhatsApp">
+            <img src="icons/whats.svg" alt="WhatsApp">
             Chame o promotor
         </a>
         <button class="menu-item" id="palpitesButton">
-            <img src="/icons/bicho.svg" alt="Palpites">
+            <img src="icons/bicho.svg" alt="Palpites">
             Palpites Jogo do Bicho
         </button>
         <button class="menu-item" id="casinoButton">
-            <img src="/icons/casino.svg" alt="Cassino">
+            <img src="icons/casino.svg" alt="Cassino">
             Jogar no Cassino
         </button>
     </div>
@@ -124,6 +143,7 @@
     <script>
         const floatingButton = document.getElementById('floatingButton');
         const floatingMenu = document.getElementById('floatingMenu');
+        const overlay = document.getElementById('overlay');
         let isDragging = false;
         let currentX;
         let currentY;
@@ -131,13 +151,39 @@
         let initialY;
         let deferredPrompt;
 
+        // Função para abrir/fechar o menu
+        function toggleMenu() {
+            const isActive = floatingMenu.classList.toggle('active');
+            overlay.classList.toggle('active', isActive); // Ativa/desativa o overlay junto com o menu
+        }
+
         // Abre/fecha o menu ao clicar no botão
         floatingButton.addEventListener('click', (e) => {
             if (!isDragging) {
-                floatingMenu.classList.toggle('active');
-                e.stopPropagation(); // Impede que o clique no botão feche o menu imediatamente
+                toggleMenu();
+                e.stopPropagation(); // Impede propagação para o overlay
             }
             isDragging = false;
+        });
+
+        // Fecha o menu ao clicar no overlay (fora do menu)
+        overlay.addEventListener('click', () => {
+            floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        overlay.addEventListener('touchstart', () => {
+            floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Impede que cliques no menu fechem o menu
+        floatingMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        floatingMenu.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
         });
 
         // Funções para arrastar o botão
@@ -153,6 +199,7 @@
             initialY = e.clientY - currentY;
             isDragging = true;
             floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
         }
 
         function dragDesktop(e) {
@@ -174,6 +221,7 @@
             initialY = e.touches[0].clientY - currentY;
             isDragging = true;
             floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
         }
 
         function drag(e) {
@@ -222,6 +270,7 @@
                 alert('A instalação do PWA não está disponível neste momento.');
             }
             floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
         });
 
         // Abre a página /palpites em uma nova guia
@@ -229,6 +278,7 @@
             e.preventDefault();
             window.open('/palpites', '_blank');
             floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
         });
 
         // Lógica para "Jogar no Cassino"
@@ -239,21 +289,14 @@
                 window.location.href = 'https://app.acertos.club/pr/fC7hpda9';
             }
             floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
         });
 
-        // Fecha o menu ao clicar fora dele
-        document.addEventListener('click', (e) => {
-            if (floatingMenu.classList.contains('active') && 
-                !floatingMenu.contains(e.target) && 
-                !floatingButton.contains(e.target)) {
-                floatingMenu.classList.remove('active');
-            }
-        });
-
-        // Fecha o menu ao clicar em qualquer item (mantido como antes)
+        // Fecha o menu ao clicar em qualquer item
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', () => {
                 floatingMenu.classList.remove('active');
+                overlay.classList.remove('active');
             });
         });
 
