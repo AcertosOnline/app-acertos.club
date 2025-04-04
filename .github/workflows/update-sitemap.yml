@@ -32,7 +32,23 @@ jobs:
       - name: Update sitemap with current date
         run: |
           CURRENT_DATE=$(date -u +"%Y-%m-%d")
-          sed -i "s/<lastmod>[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}/<lastmod>$CURRENT_DATE/" sitemap.xml
+          cat <<EOF > sitemap.xml
+          <?xml version="1.0" encoding="UTF-8"?>
+          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+              <loc>https://app.acertosonline.com/</loc>
+              <lastmod>$CURRENT_DATE</lastmod>
+              <changefreq>hourly</changefreq>
+              <priority>1.0</priority>
+            </url>
+            <url>
+              <loc>https://app.acertosonline.com/palpites</loc>
+              <lastmod>$CURRENT_DATE</lastmod>
+              <changefreq>hourly</changefreq>
+              <priority>0.8</priority>
+            </url>
+          </urlset>
+          EOF
 
       - name: Commit and push changes
         run: |
@@ -43,3 +59,7 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ping Google
+        run: |
+          curl "http://www.google.com/ping?sitemap=https://app.acertosonline.com/sitemap.xml"
