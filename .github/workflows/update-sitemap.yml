@@ -45,7 +45,7 @@ jobs:
               <loc>https://app.acertosonline.com/palpites</loc>
               <lastmod>$CURRENT_DATE</lastmod>
               <changefreq>hourly</changefreq>
-              <priority>0.8</priority>
+              <priority>1.0</priority>
             </url>
           </urlset>
           EOF
