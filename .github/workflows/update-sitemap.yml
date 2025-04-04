@@ -2,8 +2,12 @@ name: Update Sitemap
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Executa a cada 5 minutos
-  workflow_dispatch: # Permite execução manual
+    - cron: '0 0 * * *'   # 00:00 UTC (meia-noite)
+    - cron: '0 6 * * *'   # 06:00 UTC
+    - cron: '0 12 * * *'  # 12:00 UTC (meio-dia)
+    - cron: '0 18 * * *'  # 18:00 UTC
+    - cron: '0 23 * * *'  # 23:00 UTC
+  workflow_dispatch:      # Permite execução manual
 
 jobs:
   update-sitemap:
@@ -19,33 +23,23 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Generate random delay (20-40 minutes)
-        id: random-delay
+      - name: Update sitemap with current date and time
         run: |
-          DELAY=$(( ( RANDOM % 21 ) + 20 )) # Gera número aleatório entre 20 e 40
-          echo "Delaying for $DELAY minutes"
-          echo "delay=$DELAY" >> $GITHUB_OUTPUT
-
-      - name: Wait for random delay
-        run: sleep ${{ steps.random-delay.outputs.delay }}m
-
-      - name: Update sitemap with current date
-        run: |
-          CURRENT_DATE=$(date -u +"%Y-%m-%d")
+          CURRENT_DATETIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           cat <<EOF > sitemap.xml
           <?xml version="1.0" encoding="UTF-8"?>
           <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             <url>
               <loc>https://app.acertosonline.com/</loc>
-              <lastmod>$CURRENT_DATE</lastmod>
+              <lastmod>$CURRENT_DATETIME</lastmod>
               <changefreq>hourly</changefreq>
               <priority>1.0</priority>
             </url>
             <url>
               <loc>https://app.acertosonline.com/palpites</loc>
-              <lastmod>$CURRENT_DATE</lastmod>
+              <lastmod>$CURRENT_DATETIME</lastmod>
               <changefreq>hourly</changefreq>
-              <priority>1.0</priority>
+              <priority>0.8</priority>
             </url>
           </urlset>
           EOF
@@ -55,7 +49,7 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add sitemap.xml
-          git commit -m "Update sitemap lastmod to $CURRENT_DATE"
+          git commit -m "Update sitemap lastmod to $CURRENT_DATETIME"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
