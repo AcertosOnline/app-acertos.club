@@ -336,17 +336,6 @@
                 alert('Não foi possível registrar o Service Worker. Algumas funcionalidades offline podem estar indisponíveis.');
             });
         }
-
-  function registrarVisita() {
-    fetch('https://script.google.com/macros/s/AKfycbxHq4YLLYQx_0IALnDr4RJzwhJphnwMcEQ23tZ7RsW_fk3TqPFq87jr89z6QxC2xE4o/exec', {
-      method: 'POST',
-      mode: 'no-cors' // Necessário para evitar problemas de CORS
-    })
-    .then(response => console.log('Visita enviada'))
-    .catch(error => console.error('Erro:', error));
-  }
-  // Chama a função ao carregar a página
-  window.onload = registrarVisita;
 </script>
  
 </body>
