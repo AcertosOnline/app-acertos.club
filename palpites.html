@@ -311,6 +311,14 @@
             let siteData = {};
             let currentSite = null; // Variável para rastrear o site atual
 
+            // Função para obter data ajustada para UTC-3 (Recife, Brasil)
+            function getBrazilRecifeDate(timestamp) {
+                const now = timestamp ? new Date(timestamp) : new Date();
+                const utcOffset = now.getTimezoneOffset() * 60 * 1000; // Offset local em milissegundos
+                const brazilRecifeOffset = -3 * 60 * 60 * 1000; // UTC-3 em milissegundos
+                return new Date(now.getTime() - utcOffset + brazilRecifeOffset);
+            }
+
             let debounceTimeout;
             function debounce(func, wait) {
                 return function(...args) {
@@ -339,17 +347,17 @@
 
             function renderMenu() {
                 console.log("Renderizando menu...", siteData);
-                const today = new Date();
+                const today = getBrazilRecifeDate();
                 today.setHours(0, 0, 0, 0);
 
                 const sortedSites = sites.sort((a, b) => {
                     const aComp = (siteData[a]?.comparisons || []).filter(c => {
-                        const compDate = new Date(c.timestamp);
+                        const compDate = getBrazilRecifeDate(c.timestamp);
                         compDate.setHours(0, 0, 0, 0);
                         return compDate.getTime() === today.getTime();
                     }).map(c => c.text);
                     const bComp = (siteData[b]?.comparisons || []).filter(c => {
-                        const compDate = new Date(c.timestamp);
+                        const compDate = getBrazilRecifeDate(c.timestamp);
                         compDate.setHours(0, 0, 0, 0);
                         return compDate.getTime() === today.getTime();
                     }).map(c => c.text);
@@ -369,7 +377,7 @@
 
                 sortedSites.forEach(site => {
                     const todayComparisons = (siteData[site]?.comparisons || []).filter(c => {
-                        const compDate = new Date(c.timestamp);
+                        const compDate = getBrazilRecifeDate(c.timestamp);
                         compDate.setHours(0, 0, 0, 0);
                         return compDate.getTime() === today.getTime();
                     }).map(c => c.text);
@@ -391,16 +399,16 @@
 
                 const aguiaCard = document.createElement('div');
                 aguiaCard.className = 'card card-image';
-                aguiaCard.style.backgroundImage = "url('/cards/aguiaoficial.webp')";
+                aguiaCard.style.backgroundImage = "url('aguiaoficial.webp')";
                 aguiaCard.innerHTML = `<h3>Banca Águia Oficial</h3>`;
-                aguiaCard.onclick = () => window.open('https://app.aguia-oficial.com/', '_blank');
+                aguiaCard.onclick = () => window.open('https://aguia-oficial.com/', '_blank');
                 fragment.appendChild(aguiaCard);
 
                 const acertosCard = document.createElement('div');
                 acertosCard.className = 'card card-image';
-                acertosCard.style.backgroundImage = "url('/cards/acertosclub.webp')";
+                acertosCard.style.backgroundImage = "url('acertosclub.webp')";
                 acertosCard.innerHTML = `<h3>Banca Acertos Club</h3>`;
-                acertosCard.onclick = () => window.open('https://app.acertosonline.com/', '_blank');
+                acertosCard.onclick = () => window.open('https://acertosonline.com/', '_blank');
                 fragment.appendChild(acertosCard);
 
                 cardContainer.innerHTML = '';
@@ -432,13 +440,13 @@
             }
 
             function sortComparisons(comparisons) {
-                const today = new Date();
+                const today = getBrazilRecifeDate();
                 today.setHours(0, 0, 0, 0);
                 const yesterday = new Date(today);
                 yesterday.setDate(today.getDate() - 1);
 
                 return (comparisons || []).map(comp => {
-                    const compDate = new Date(comp.timestamp);
+                    const compDate = getBrazilRecifeDate(comp.timestamp);
                     compDate.setHours(0, 0, 0, 0);
                     let dateLabel = '';
                     const compTime = compDate.getTime();
@@ -446,13 +454,29 @@
                         dateLabel = 'Hoje';
                     } else if (compTime === yesterday.getTime()) {
                         dateLabel = 'Ontem';
+                    } else {
+                        dateLabel = ''; // Outros dias não terão rótulo específico
                     }
-                    return { text: comp.text, dateLabel };
+                    return { text: comp.text, dateLabel, timestamp: compDate };
                 }).sort((a, b) => {
-                    if (a.text.includes("Milhar") && !b.text.includes("Milhar")) return -1;
-                    if (!a.text.includes("Milhar") && b.text.includes("Milhar")) return 1;
-                    if (a.text.includes("Centena") && !b.text.includes("Centena")) return -1;
-                    if (!a.text.includes("Centena") && b.text.includes("Centena")) return 1;
+                    // Prioridade 1: "Hoje" vem antes de "Ontem", outros dias depois
+                    if (a.dateLabel === 'Hoje' && b.dateLabel !== 'Hoje') return -1;
+                    if (a.dateLabel !== 'Hoje' && b.dateLabel === 'Hoje') return 1;
+                    if (a.dateLabel === 'Ontem' && b.dateLabel !== 'Ontem' && b.dateLabel !== 'Hoje') return -1;
+                    if (a.dateLabel !== 'Ontem' && b.dateLabel === 'Ontem' && a.dateLabel !== 'Hoje') return 1;
+
+                    // Dentro do mesmo dia, ordenar por precedência: Milhar > Centena > Dezena
+                    const aIsMilhar = a.text.includes("Milhar");
+                    const bIsMilhar = b.text.includes("Milhar");
+                    const aIsCentena = a.text.includes("Centena");
+                    const bIsCentena = b.text.includes("Centena");
+
+                    if (aIsMilhar && !bIsMilhar) return -1;
+                    if (!aIsMilhar && bIsMilhar) return 1;
+                    if (aIsCentena && !bIsCentena && !aIsMilhar && !bIsMilhar) return -1;
+                    if (!aIsCentena && bIsCentena && !aIsMilhar && !bIsMilhar) return 1;
+
+                    // Se ambos têm a mesma tag (ou nenhuma das duas), mantém a ordem original
                     return 0;
                 });
             }
@@ -466,7 +490,8 @@
 
                 const data = siteData[site] || {};
 
-                let html = `<h2>${site}</h2><p class="timestamp">Última atualização geral: ${data.lastUpdated || 'Desconhecida'}</p>`;
+                const lastUpdatedStr = data.lastUpdated ? getBrazilRecifeDate(data.lastUpdated).toISOString() : 'Desconhecida';
+                let html = `<h2>${site}</h2><p class="timestamp">Última atualização geral: ${lastUpdatedStr}</p>`;
                 html += `
                     <div class="tabs">
                         <button class="tablinks" onclick="openTab(event, 'Results-${site}', '${site}')">Resultados</button>
@@ -493,7 +518,6 @@
 
             function renderTabContent(tab, site, data) {
                 const tabDiv = document.getElementById(`${tab}-${site}`);
-                // Removido "if (tabDiv.innerHTML) return;" para permitir atualizações em tempo real
 
                 if (tab === 'Results') {
                     let html = '';
@@ -502,14 +526,14 @@
                             .filter(titleData => titleData.latestData && titleData.latestData.length > 0)
                             .reverse()
                             .sort((a, b) => {
-                                const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(0);
-                                const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(0);
+                                const dateA = a.lastUpdated ? getBrazilRecifeDate(a.lastUpdated) : new Date(0);
+                                const dateB = b.lastUpdated ? getBrazilRecifeDate(b.lastUpdated) : new Date(0);
                                 return dateB - dateA;
                             });
 
                         if (validTitles.length > 0) {
                             html = '<div class="table-grid">' + validTitles.map(titleData => {
-                                const lastUpdated = titleData.lastUpdated ? new Date(titleData.lastUpdated) : null;
+                                const lastUpdated = titleData.lastUpdated ? getBrazilRecifeDate(titleData.lastUpdated) : null;
                                 let dateStr = 'Data desconhecida';
                                 let dayOfWeek = '';
                                 let isToday = '';
@@ -521,7 +545,7 @@
                                     dateStr = `${day}/${month}/${year}`;
                                     const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
                                     dayOfWeek = daysOfWeek[lastUpdated.getDay()];
-                                    const today = new Date();
+                                    const today = getBrazilRecifeDate();
                                     today.setHours(0, 0, 0, 0);
                                     lastUpdated.setHours(0, 0, 0, 0);
                                     isToday = (lastUpdated.getTime() === today.getTime()) ? ' (hoje)' : '';
@@ -558,7 +582,7 @@
                             }
                         }
 
-                        const lastUpdated = data.lastUpdated ? new Date(data.lastUpdated) : null;
+                        const lastUpdated = data.lastUpdated ? getBrazilRecifeDate(data.lastUpdated) : null;
                         let dateStr = '';
                         let dayOfWeek = '';
                         if (lastUpdated) {
@@ -595,7 +619,7 @@
                         const sortedComparisons = sortComparisons(data.comparisons);
                         html = '<ul>' + sortedComparisons.map(comp => {
                             const className = comp.text.includes("Milhar") ? 'milhar' : comp.text.includes("Centena") ? 'centena' : 'dezena';
-                            return `<li class="${className}">${comp.text}<span class="comparison-date">(${comp.dateLabel})</span></li>`;
+                            return `<li class="${className}">${comp.text}${comp.dateLabel ? `<span class="comparison-date">(${comp.dateLabel})</span>` : ''}</li>`;
                         }).join('') + '</ul>';
                     } else {
                         html = '<p>Nenhuma comparação disponível</p>';
