@@ -3,35 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-<title>Acertos.Club - Palpites e Bônus de 30%</title>
-<meta name="description" content="Ganhe 30% de bônus na primeira recarga! Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
+    <title>Acertos.Club - Palpites e Bônus de 30%</title>
+    <meta name="description" content="Ganhe 30% de bônus na primeira recarga! Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
 
-<!-- Canonical URL para evitar duplicação de conteúdo -->
-<link rel="canonical" href="https://app.acertosonline.com/">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://app.acertosonline.com/">
 
-<!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
-<meta property="og:title" content="Acertos.Club - Palpites e Bônus de 30%">
-<meta property="og:description" content="Ganhe 30% de bônus na primeira recarga! Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
-<meta property="og:image" content="https://app.acertosonline.com/share.webp">
-<meta property="og:url" content="https://app.acertosonline.com/">
-<meta property="og:type" content="website">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Acertos.Club - Palpites e Bônus de 30%">
+    <meta property="og:description" content="Ganhe 30% de bônus na primeira recarga! Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
+    <meta property="og:image" content="https://app.acertosonline.com/share.webp">
+    <meta property="og:url" content="https://app.acertosonline.com/">
+    <meta property="og:type" content="website">
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Acertos.Club - Palpites e Bônus de 30%">
-<meta name="twitter:description" content="Ganhe 30% de bônus na primeira recarga! Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
-<meta name="twitter:image" content="https://app.acertosonline.com/share.webp">
-<meta name="twitter:site" content="@AcertosOnlineJB">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Acertos.Club - Palpites e Bônus de 30%">
+    <meta name="twitter:description" content="Ganhe 30% de bônus na primeira recarga! - Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
+    <meta name="twitter:image" content="https://app.acertosonline.com/share.webp">
+    <meta name="twitter:site" content="@AcertosOnlineJB">
 
-<!-- Favicon e Ícones -->
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon32.webp">
-<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon16.webp">
-<link rel="icon" type="image/x-icon" href="/icons/favicon.ico"> <!-- Adicionado para compatibilidade -->
-<link rel="apple-touch-icon" href="/icons/favicon180.webp">
-<meta name="theme-color" content="#f3670f">
-    
-    <link rel="manifest" href="/manifest.json"> <!-- Link para o manifesto do PWA -->
+    <!-- Favicon e Ícones -->
+    <link rel="preload" href="/icons/favicon32.webp" as="image">
+    <link rel="preload" href="/icons/favicon180.webp" as="image">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon32.webp">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon16.webp">
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="apple-touch-icon" href="/icons/favicon180.webp">
+    <meta name="theme-color" content="#f3670f">
+    <link rel="manifest" href="/manifest.json" as="fetch" crossorigin="use-credentials">
+
     <style>
         html, body {
             margin: 0;
@@ -45,9 +46,8 @@
             width: 100%;
             height: 100%;
             border: none;
+            display: block;
         }
-
-        /* Estilo do botão móvel */
         .floating-button {
             position: fixed;
             bottom: 20px;
@@ -66,8 +66,6 @@
             z-index: 1000;
             touch-action: none;
         }
-
-        /* Estilo do menu */
         .floating-menu {
             position: fixed;
             bottom: 80px;
@@ -78,13 +76,11 @@
             display: none;
             flex-direction: column;
             width: 200px;
-            z-index: 1001; /* Maior que o overlay */
+            z-index: 1001;
         }
-
         .floating-menu.active {
             display: flex;
         }
-
         .menu-item {
             display: flex;
             align-items: center;
@@ -99,55 +95,72 @@
             text-align: left;
             cursor: pointer;
         }
-
         .menu-item:last-child {
             border-bottom: none;
         }
-
         .menu-item:hover {
             background-color: #f5f5f5;
         }
-
         .menu-item img {
             width: 20px;
             height: 20px;
             margin-right: 10px;
         }
-
-        /* Overlay invisível */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0); /* Transparente */
-            z-index: 1000; /* Abaixo do menu e botão */
+            background: rgba(0, 0, 0, 0);
+            z-index: 1000;
             display: none;
         }
-
         .overlay.active {
             display: block;
+        }
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        #loading-overlay div {
+            font-family: Arial, sans-serif;
+            color: #333;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <iframe 
         id="main-iframe"
-        src="https://app.acertos.club/pr/fC7hpda9"
+        data-src="https://app.acertos.club/pr/fC7hpda9"
         allow="clipboard-read; clipboard-write; fullscreen"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation allow-modals allow-downloads"
         allowfullscreen
         title="Acertos Club"
+        loading="lazy"
     ></iframe>
 
-    <!-- Overlay para capturar cliques fora -->
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div>Carregando...</div>
+    </div>
+
+    <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- Botão móvel -->
+    <!-- Floating Button -->
     <div class="floating-button" id="floatingButton">+</div>
 
-    <!-- Menu flutuante -->
+    <!-- Floating Menu -->
     <div class="floating-menu" id="floatingMenu">
         <button class="menu-item" id="addToHome">
             <img src="icons/pwa.svg" alt="PWA">
@@ -171,6 +184,7 @@
         const floatingButton = document.getElementById('floatingButton');
         const floatingMenu = document.getElementById('floatingMenu');
         const overlay = document.getElementById('overlay');
+        const iframe = document.getElementById('main-iframe');
         let isDragging = false;
         let currentX;
         let currentY;
@@ -178,47 +192,48 @@
         let initialY;
         let deferredPrompt;
 
-        // Função para abrir/fechar o menu
-        function toggleMenu() {
-            const isActive = floatingMenu.classList.toggle('active');
-            overlay.classList.toggle('active', isActive); // Ativa/desativa o overlay junto com o menu
+        // Debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
         }
 
-        // Abre/fecha o menu ao clicar no botão
+        // Toggle menu
+        function toggleMenu() {
+            const isActive = floatingMenu.classList.toggle('active');
+            overlay.classList.toggle('active', isActive);
+        }
+
+        // Floating button click
         floatingButton.addEventListener('click', (e) => {
             if (!isDragging) {
                 toggleMenu();
-                e.stopPropagation(); // Impede propagação para o overlay
+                e.stopPropagation();
             }
             isDragging = false;
         });
 
-        // Fecha o menu ao clicar no overlay (fora do menu)
+        // Overlay click/touch
         overlay.addEventListener('click', () => {
             floatingMenu.classList.remove('active');
             overlay.classList.remove('active');
         });
-
         overlay.addEventListener('touchstart', () => {
             floatingMenu.classList.remove('active');
             overlay.classList.remove('active');
         });
 
-        // Impede que cliques no menu fechem o menu
-        floatingMenu.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
+        // Prevent menu clicks from closing
+        floatingMenu.addEventListener('click', (e) => e.stopPropagation());
+        floatingMenu.addEventListener('touchstart', (e) => e.stopPropagation());
 
-        floatingMenu.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-        });
-
-        // Funções para arrastar o botão
+        // Dragging logic
         floatingButton.addEventListener('mousedown', startDraggingDesktop);
-        floatingButton.addEventListener('mousemove', dragDesktop);
         floatingButton.addEventListener('mouseup', stopDragging);
         floatingButton.addEventListener('touchstart', startDragging);
-        floatingButton.addEventListener('touchmove', drag);
         floatingButton.addEventListener('touchend', stopDragging);
 
         function startDraggingDesktop(e) {
@@ -229,7 +244,19 @@
             overlay.classList.remove('active');
         }
 
-        function dragDesktop(e) {
+        function startDragging(e) {
+            initialX = e.touches[0].clientX - currentX;
+            initialY = e.touches[0].clientY - currentY;
+            isDragging = true;
+            floatingMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        function stopDragging() {
+            isDragging = false;
+        }
+
+        const dragDesktopDebounced = debounce((e) => {
             if (isDragging) {
                 e.preventDefault();
                 currentX = e.clientX - initialX;
@@ -241,17 +268,9 @@
                 floatingButton.style.right = 'auto';
                 floatingButton.style.bottom = 'auto';
             }
-        }
+        }, 10);
 
-        function startDragging(e) {
-            initialX = e.touches[0].clientX - currentX;
-            initialY = e.touches[0].clientY - currentY;
-            isDragging = true;
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        }
-
-        function drag(e) {
+        const dragDebounced = debounce((e) => {
             if (isDragging) {
                 e.preventDefault();
                 currentX = e.touches[0].clientX - initialX;
@@ -263,19 +282,28 @@
                 floatingButton.style.right = 'auto';
                 floatingButton.style.bottom = 'auto';
             }
-        }
+        }, 10);
 
-        function stopDragging() {
-            isDragging = false;
-        }
+        floatingButton.addEventListener('mousemove', dragDesktopDebounced);
+        floatingButton.addEventListener('touchmove', dragDebounced);
 
-        // Posição inicial do botão
+        // Initial button position
         currentX = window.innerWidth - floatingButton.offsetWidth - 20;
         currentY = window.innerHeight - floatingButton.offsetHeight - 20;
         floatingButton.style.left = currentX + 'px';
         floatingButton.style.top = currentY + 'px';
 
-        // Lógica para instalar o PWA
+        // Lazy load iframe
+        document.addEventListener('DOMContentLoaded', () => {
+            iframe.src = iframe.getAttribute('data-src');
+        });
+
+        // Hide loading overlay
+        iframe.addEventListener('load', () => {
+            document.getElementById('loading-overlay').style.display = 'none';
+        });
+
+        // PWA installation
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -300,7 +328,7 @@
             overlay.classList.remove('active');
         });
 
-        // Abre a página /palpites em uma nova guia
+        // Palpites button
         document.getElementById('palpitesButton').addEventListener('click', (e) => {
             e.preventDefault();
             window.open('/palpites', '_blank');
@@ -308,7 +336,7 @@
             overlay.classList.remove('active');
         });
 
-        // Lógica para "Jogar no Cassino"
+        // Casino button
         document.getElementById('casinoButton').addEventListener('click', (e) => {
             e.preventDefault();
             const message = 'Esta versão do Aplicativo não é compatível com os jogos do Cassino, para jogar nessa modalidade, clique OK para usar uma versão compatível!';
@@ -319,7 +347,7 @@
             overlay.classList.remove('active');
         });
 
-        // Fecha o menu ao clicar em qualquer item
+        // Close menu on item click
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', () => {
                 floatingMenu.classList.remove('active');
@@ -327,16 +355,14 @@
             });
         });
 
-        // Registro do Service Worker com feedback ao usuário
+        // Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then(() => {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(() => {
                 console.log('Service Worker registrado com sucesso');
             }).catch((error) => {
                 console.error('Erro ao registrar o Service Worker:', error);
-                alert('Não foi possível registrar o Service Worker. Algumas funcionalidades offline podem estar indisponíveis.');
             });
         }
-</script>
- 
+    </script>
 </body>
 </html>
