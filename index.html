@@ -19,7 +19,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Acertos.Club - Palpites e Bônus de 30%">
-    <meta name="twitter:description" content="Ganhe 30% de bônus na primeira recarga! - Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
+    <meta name="twitter:description" content="Ganhe 30% de bônus na primeira recarga! Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
     <meta name="twitter:image" content="https://app.acertosonline.com/share.webp">
     <meta name="twitter:site" content="@AcertosOnlineJB">
 
@@ -136,21 +136,39 @@
             color: #333;
             font-size: 16px;
         }
+        #placeholder {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 998;
+            font-family: Arial, sans-serif;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
+    <div id="placeholder">Bem-vindo ao Acertos.Club! Clique no botão para começar.</div>
     <iframe 
         id="main-iframe"
         data-src="https://app.acertos.club/pr/fC7hpda9"
         allow="clipboard-read; clipboard-write; fullscreen"
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation allow-modals allow-downloads"
+        sandbox="allow-scripts allow-popups allow-forms allow-top-navigation allow-modals allow-downloads"
         allowfullscreen
         title="Acertos Club"
         loading="lazy"
     ></iframe>
 
     <!-- Loading Overlay -->
-    <div id="loading-overlay">
+    <div id="loading-overlay" style="display: none;">
         <div>Carregando...</div>
     </div>
 
@@ -181,188 +199,7 @@
     </div>
 
     <script>
-        const floatingButton = document.getElementById('floatingButton');
-        const floatingMenu = document.getElementById('floatingMenu');
-        const overlay = document.getElementById('overlay');
-        const iframe = document.getElementById('main-iframe');
-        let isDragging = false;
-        let currentX;
-        let currentY;
-        let initialX;
-        let initialY;
-        let deferredPrompt;
-
-        // Debounce function
-        function debounce(func, wait) {
-            let timeout;
-            return function (...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), wait);
-            };
-        }
-
-        // Toggle menu
-        function toggleMenu() {
-            const isActive = floatingMenu.classList.toggle('active');
-            overlay.classList.toggle('active', isActive);
-        }
-
-        // Floating button click
-        floatingButton.addEventListener('click', (e) => {
-            if (!isDragging) {
-                toggleMenu();
-                e.stopPropagation();
-            }
-            isDragging = false;
-        });
-
-        // Overlay click/touch
-        overlay.addEventListener('click', () => {
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-        overlay.addEventListener('touchstart', () => {
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Prevent menu clicks from closing
-        floatingMenu.addEventListener('click', (e) => e.stopPropagation());
-        floatingMenu.addEventListener('touchstart', (e) => e.stopPropagation());
-
-        // Dragging logic
-        floatingButton.addEventListener('mousedown', startDraggingDesktop);
-        floatingButton.addEventListener('mouseup', stopDragging);
-        floatingButton.addEventListener('touchstart', startDragging);
-        floatingButton.addEventListener('touchend', stopDragging);
-
-        function startDraggingDesktop(e) {
-            initialX = e.clientX - currentX;
-            initialY = e.clientY - currentY;
-            isDragging = true;
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        }
-
-        function startDragging(e) {
-            initialX = e.touches[0].clientX - currentX;
-            initialY = e.touches[0].clientY - currentY;
-            isDragging = true;
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        }
-
-        function stopDragging() {
-            isDragging = false;
-        }
-
-        const dragDesktopDebounced = debounce((e) => {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-                currentX = Math.max(0, Math.min(currentX, window.innerWidth - floatingButton.offsetWidth));
-                currentY = Math.max(0, Math.min(currentY, window.innerHeight - floatingButton.offsetHeight));
-                floatingButton.style.left = currentX + 'px';
-                floatingButton.style.top = currentY + 'px';
-                floatingButton.style.right = 'auto';
-                floatingButton.style.bottom = 'auto';
-            }
-        }, 10);
-
-        const dragDebounced = debounce((e) => {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
-                currentX = Math.max(0, Math.min(currentX, window.innerWidth - floatingButton.offsetWidth));
-                currentY = Math.max(0, Math.min(currentY, window.innerHeight - floatingButton.offsetHeight));
-                floatingButton.style.left = currentX + 'px';
-                floatingButton.style.top = currentY + 'px';
-                floatingButton.style.right = 'auto';
-                floatingButton.style.bottom = 'auto';
-            }
-        }, 10);
-
-        floatingButton.addEventListener('mousemove', dragDesktopDebounced);
-        floatingButton.addEventListener('touchmove', dragDebounced);
-
-        // Initial button position
-        currentX = window.innerWidth - floatingButton.offsetWidth - 20;
-        currentY = window.innerHeight - floatingButton.offsetHeight - 20;
-        floatingButton.style.left = currentX + 'px';
-        floatingButton.style.top = currentY + 'px';
-
-        // Lazy load iframe
-        document.addEventListener('DOMContentLoaded', () => {
-            iframe.src = iframe.getAttribute('data-src');
-        });
-
-        // Hide loading overlay
-        iframe.addEventListener('load', () => {
-            document.getElementById('loading-overlay').style.display = 'none';
-        });
-
-        // PWA installation
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        document.getElementById('addToHome').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('Usuário aceitou instalar o PWA');
-                    } else {
-                        console.log('Usuário recusou instalar o PWA');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                alert('A instalação do PWA não está disponível neste momento.');
-            }
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Palpites button
-        document.getElementById('palpitesButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            window.open('/palpites', '_blank');
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Casino button
-        document.getElementById('casinoButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            const message = 'Esta versão do Aplicativo não é compatível com os jogos do Cassino, para jogar nessa modalidade, clique OK para usar uma versão compatível!';
-            if (confirm(message)) {
-                window.location.href = 'https://app.acertos.club/pr/fC7hpda9';
-            }
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Close menu on item click
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', () => {
-                floatingMenu.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-        });
-
-        // Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(() => {
-                console.log('Service Worker registrado com sucesso');
-            }).catch((error) => {
-                console.error('Erro ao registrar o Service Worker:', error);
-            });
-        }
+        const floatingButton=document.getElementById("floatingButton"),floatingMenu=document.getElementById("floatingMenu"),overlay=document.getElementById("overlay"),iframe=document.getElementById("main-iframe"),loadingOverlay=document.getElementById("loading-overlay"),placeholder=document.getElementById("placeholder");let isDragging=!1,currentX,currentY,initialX,initialY,deferredPrompt;function debounce(t,e){let n;return function(...i){clearTimeout(n),n=setTimeout(()=>t.apply(this,i),e)}}function toggleMenu(){const t=floatingMenu.classList.toggle("active");overlay.classList.toggle("active",t)}floatingButton.addEventListener("click",t=>{isDragging||(toggleMenu(),t.stopPropagation()),isDragging=!1}),overlay.addEventListener("click",()=>{floatingMenu.classList.remove("active"),overlay.classList.remove("active")}),overlay.addEventListener("touchstart",()=>{floatingMenu.classList.remove("active"),overlay.classList.remove("active")}),floatingMenu.addEventListener("click",t=>t.stopPropagation()),floatingMenu.addEventListener("touchstart",t=>t.stopPropagation()),floatingButton.addEventListener("mousedown",t=>{initialX=t.clientX-currentX,initialY=t.clientY-currentY,isDragging=!0,floatingMenu.classList.remove("active"),overlay.classList.remove("active")}),floatingButton.addEventListener("touchstart",t=>{initialX=t.touches[0].clientX-currentX,initialY=t.touches[0].clientY-currentY,isDragging=!0,floatingMenu.classList.remove("active"),overlay.classList.remove("active")}),floatingButton.addEventListener("mouseup",()=>{isDragging=!1}),floatingButton.addEventListener("touchend",()=>{isDragging=!1});const dragDesktopDebounced=debounce(t=>{if(isDragging){t.preventDefault(),currentX=t.clientX-initialX,currentY=t.clientY-initialY,currentX=Math.max(0,Math.min(currentX,window.innerWidth-floatingButton.offsetWidth)),currentY=Math.max(0,Math.min(currentY,window.innerHeight-floatingButton.offsetHeight)),floatingButton.style.left=currentX+"px",floatingButton.style.top=currentY+"px",floatingButton.style.right="auto",floatingButton.style.bottom="auto"}},10),dragDebounced=debounce(t=>{if(isDragging){t.preventDefault(),currentX=t.touches[0].clientX-initialX,currentY=t.touches[0].clientY-initialY,currentX=Math.max(0,Math.min(currentX,window.innerWidth-floatingButton.offsetWidth)),currentY=Math.max(0,Math.min(currentY,window.innerHeight-floatingButton.offsetHeight)),floatingButton.style.left=currentX+"px",floatingButton.style.top=currentY+"px",floatingButton.style.right="auto",floatingButton.style.bottom="auto"}},10);floatingButton.addEventListener("mousemove",dragDesktopDebounced),floatingButton.addEventListener("touchmove",dragDebounced),currentX=window.innerWidth-floatingButton.offsetWidth-20,currentY=window.innerHeight-floatingButton.offsetHeight-20,floatingButton.style.left=currentX+"px",floatingButton.style.top=currentY+"px",floatingButton.addEventListener("click",()=>{placeholder.style.display="none",loadingOverlay.style.display="flex",iframe.src=iframe.getAttribute("data-src")}),iframe.addEventListener("load",()=>{loadingOverlay.style.display="none"}),window.addEventListener("beforeinstallprompt",t=>{t.preventDefault(),deferredPrompt=t}),document.getElementById("addToHome").addEventListener("click",t=>{t.preventDefault(),deferredPrompt?(deferredPrompt.prompt(),deferredPrompt.userChoice.then(t=>{"accepted"===t.outcome||alert("Instalação do PWA recusada."),deferredPrompt=null})):alert("Instalação do PWA indisponível."),floatingMenu.classList.remove("active"),overlay.classList.remove("active")}),document.getElementById("palpitesButton").addEventListener("click",t=>{t.preventDefault(),window.open("/palpites","_blank"),floatingMenu.classList.remove("active"),overlay.classList.remove("active")}),document.getElementById("casinoButton").addEventListener("click",t=>{t.preventDefault(),confirm("Esta versão do Aplicativo não é compatível com os jogos do Cassino, clique OK para usar uma versão compatível!")&&window.location.href="https://app.acertos.club/pr/fC7hpda9",floatingMenu.classList.remove("active"),overlay.classList.remove("active")}),document.querySelectorAll(".menu-item").forEach(t=>{t.addEventListener("click",()=>{floatingMenu.classList.remove("active"),overlay.classList.remove("active")})}),"serviceWorker"in navigator&&navigator.serviceWorker.register("/sw.js",{scope:"/"})
     </script>
 </body>
 </html>
