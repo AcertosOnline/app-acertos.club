@@ -19,7 +19,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Acertos.Club - Palpites e Bônus de 30%">
-    <meta name="twitter:description" content="Ganhe 30% de bônus na primeira recarga! - Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
+    <meta name="twitter:description" content="Ganhe 30% de bônus na primeira recarga! Melhor cotação do mercado e robô exclusivo de palpites com alta precisão.">
     <meta name="twitter:image" content="https://app.acertosonline.com/share.webp">
     <meta name="twitter:site" content="@AcertosOnlineJB">
 
@@ -27,122 +27,21 @@
     <link rel="preload" href="/icons/favicon32.webp" as="image">
     <link rel="preload" href="/icons/favicon180.webp" as="image">
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon32.webp">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon16.webp">
-    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon16.webp" defer>
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" defer>
     <link rel="apple-touch-icon" href="/icons/favicon180.webp">
     <meta name="theme-color" content="#f3670f">
     <link rel="manifest" href="/manifest.json" as="fetch" crossorigin="use-credentials">
 
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-        .floating-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            user-select: none;
-            z-index: 1000;
-            touch-action: none;
-        }
-        .floating-menu {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            display: none;
-            flex-direction: column;
-            width: 200px;
-            z-index: 1001;
-        }
-        .floating-menu.active {
-            display: flex;
-        }
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            text-decoration: none;
-            color: #333;
-            font-family: Arial, sans-serif;
-            border-bottom: 1px solid #eee;
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-        }
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-        .menu-item:hover {
-            background-color: #f5f5f5;
-        }
-        .menu-item img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0);
-            z-index: 1000;
-            display: none;
-        }
-        .overlay.active {
-            display: block;
-        }
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-        #loading-overlay div {
-            font-family: Arial, sans-serif;
-            color: #333;
-            font-size: 16px;
-        }
+        html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;position:relative}iframe{width:100%;height:100%;border:none;display:block}.floating-button{position:fixed;bottom:20px;right:20px;width:50px;height:50px;background-color:#007bff;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;user-select:none;z-index:1000;touch-action:none}.floating-menu{position:fixed;bottom:80px;right:20px;background-color:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.2);display:none;flex-direction:column;width:200px;z-index:1001}.floating-menu.active{display:flex}.menu-item{display:flex;align-items:center;padding:10px;text-decoration:none;color:#333;font-family:Arial,sans-serif;border-bottom:1px solid #eee;background:none;border:none;width:100%;text-align:left;cursor:pointer}.menu-item:last-child{border-bottom:none}.menu-item:hover{background-color:#f5f5f5}.menu-item img{width:20px;height:20px;margin-right:10px}.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0);z-index:1000;display:none}.overlay.active{display:block}#loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;z-index:999}#loading-overlay div{font-family:Arial,sans-serif;color:#333;font-size:16px}
     </style>
 </head>
 <body>
     <iframe 
         id="main-iframe"
         data-src="https://app.acertos.club/pr/fC7hpda9"
-        allow="clipboard-read; clipboard-write; fullscreen"
+        allow="clipboard-read;clipboard-write;fullscreen"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation allow-modals allow-downloads"
         allowfullscreen
         title="Acertos Club"
@@ -181,188 +80,7 @@
     </div>
 
     <script>
-        const floatingButton = document.getElementById('floatingButton');
-        const floatingMenu = document.getElementById('floatingMenu');
-        const overlay = document.getElementById('overlay');
-        const iframe = document.getElementById('main-iframe');
-        let isDragging = false;
-        let currentX;
-        let currentY;
-        let initialX;
-        let initialY;
-        let deferredPrompt;
-
-        // Debounce function
-        function debounce(func, wait) {
-            let timeout;
-            return function (...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), wait);
-            };
-        }
-
-        // Toggle menu
-        function toggleMenu() {
-            const isActive = floatingMenu.classList.toggle('active');
-            overlay.classList.toggle('active', isActive);
-        }
-
-        // Floating button click
-        floatingButton.addEventListener('click', (e) => {
-            if (!isDragging) {
-                toggleMenu();
-                e.stopPropagation();
-            }
-            isDragging = false;
-        });
-
-        // Overlay click/touch
-        overlay.addEventListener('click', () => {
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-        overlay.addEventListener('touchstart', () => {
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Prevent menu clicks from closing
-        floatingMenu.addEventListener('click', (e) => e.stopPropagation());
-        floatingMenu.addEventListener('touchstart', (e) => e.stopPropagation());
-
-        // Dragging logic
-        floatingButton.addEventListener('mousedown', startDraggingDesktop);
-        floatingButton.addEventListener('mouseup', stopDragging);
-        floatingButton.addEventListener('touchstart', startDragging);
-        floatingButton.addEventListener('touchend', stopDragging);
-
-        function startDraggingDesktop(e) {
-            initialX = e.clientX - currentX;
-            initialY = e.clientY - currentY;
-            isDragging = true;
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        }
-
-        function startDragging(e) {
-            initialX = e.touches[0].clientX - currentX;
-            initialY = e.touches[0].clientY - currentY;
-            isDragging = true;
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        }
-
-        function stopDragging() {
-            isDragging = false;
-        }
-
-        const dragDesktopDebounced = debounce((e) => {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-                currentX = Math.max(0, Math.min(currentX, window.innerWidth - floatingButton.offsetWidth));
-                currentY = Math.max(0, Math.min(currentY, window.innerHeight - floatingButton.offsetHeight));
-                floatingButton.style.left = currentX + 'px';
-                floatingButton.style.top = currentY + 'px';
-                floatingButton.style.right = 'auto';
-                floatingButton.style.bottom = 'auto';
-            }
-        }, 10);
-
-        const dragDebounced = debounce((e) => {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
-                currentX = Math.max(0, Math.min(currentX, window.innerWidth - floatingButton.offsetWidth));
-                currentY = Math.max(0, Math.min(currentY, window.innerHeight - floatingButton.offsetHeight));
-                floatingButton.style.left = currentX + 'px';
-                floatingButton.style.top = currentY + 'px';
-                floatingButton.style.right = 'auto';
-                floatingButton.style.bottom = 'auto';
-            }
-        }, 10);
-
-        floatingButton.addEventListener('mousemove', dragDesktopDebounced);
-        floatingButton.addEventListener('touchmove', dragDebounced);
-
-        // Initial button position
-        currentX = window.innerWidth - floatingButton.offsetWidth - 20;
-        currentY = window.innerHeight - floatingButton.offsetHeight - 20;
-        floatingButton.style.left = currentX + 'px';
-        floatingButton.style.top = currentY + 'px';
-
-        // Lazy load iframe
-        document.addEventListener('DOMContentLoaded', () => {
-            iframe.src = iframe.getAttribute('data-src');
-        });
-
-        // Hide loading overlay
-        iframe.addEventListener('load', () => {
-            document.getElementById('loading-overlay').style.display = 'none';
-        });
-
-        // PWA installation
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        document.getElementById('addToHome').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('Usuário aceitou instalar o PWA');
-                    } else {
-                        console.log('Usuário recusou instalar o PWA');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                alert('A instalação do PWA não está disponível neste momento.');
-            }
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Palpites button
-        document.getElementById('palpitesButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            window.open('/palpites', '_blank');
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Casino button
-        document.getElementById('casinoButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            const message = 'Esta versão do Aplicativo não é compatível com os jogos do Cassino, para jogar nessa modalidade, clique OK para usar uma versão compatível!';
-            if (confirm(message)) {
-                window.location.href = 'https://app.acertos.club/pr/fC7hpda9';
-            }
-            floatingMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
-        // Close menu on item click
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', () => {
-                floatingMenu.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-        });
-
-        // Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(() => {
-                console.log('Service Worker registrado com sucesso');
-            }).catch((error) => {
-                console.error('Erro ao registrar o Service Worker:', error);
-            });
-        }
+        const e=document,f=e.getElementById("floatingButton"),m=e.getElementById("floatingMenu"),o=e.getElementById("overlay"),i=e.getElementById("main-iframe"),l=e.getElementById("loading-overlay");let d=!1,g,h,t,n,r;function b(a,c){let s;return function(...v){clearTimeout(s),s=setTimeout(()=>a.apply(this,v),c)}}function k(){const a=m.classList.toggle("active");o.classList.toggle("active",a)}f.addEventListener("click",a=>{d||(k(),a.stopPropagation()),d=!1}),o.addEventListener("click",()=>{m.classList.remove("active"),o.classList.remove("active")}),o.addEventListener("touchstart",()=>{m.classList.remove("active"),o.classList.remove("active")}),m.addEventListener("click",a=>a.stopPropagation()),m.addEventListener("touchstart",a=>a.stopPropagation()),f.addEventListener("mousedown",a=>{t=a.clientX-g,n=a.clientY-h,d=!0,m.classList.remove("active"),o.classList.remove("active")}),f.addEventListener("touchstart",a=>{t=a.touches[0].clientX-g,n=a.touches[0].clientY-h,d=!0,m.classList.remove("active"),o.classList.remove("active")}),f.addEventListener("mouseup",()=>{d=!1}),f.addEventListener("touchend",()=>{d=!1});const u=b(a=>{if(d){a.preventDefault(),g=a.clientX-t,h=a.clientY-n,g=Math.max(0,Math.min(g,window.innerWidth-f.offsetWidth)),h=Math.max(0,Math.min(h,window.innerHeight-f.offsetHeight)),f.style.left=g+"px",f.style.top=h+"px",f.style.right="auto",f.style.bottom="auto"}},10),w=b(a=>{if(d){a.preventDefault(),g=a.touches[0].clientX-t,h=a.touches[0].clientY-n,g=Math.max(0,Math.min(g,window.innerWidth-f.offsetWidth)),h=Math.max(0,Math.min(h,window.innerHeight-f.offsetHeight)),f.style.left=g+"px",f.style.top=h+"px",f.style.right="auto",f.style.bottom="auto"}},10);f.addEventListener("mousemove",u),f.addEventListener("touchmove",w),g=window.innerWidth-f.offsetWidth-20,h=window.innerHeight-f.offsetHeight-20,f.style.left=g+"px",f.style.top=h+"px";const y=new IntersectionObserver((a,c)=>{a[0].isIntersecting&&(i.src=i.getAttribute("data-src"),c.disconnect())},{rootMargin:"100px"});y.observe(i),i.addEventListener("load",()=>{l.style.display="none"}),window.addEventListener("beforeinstallprompt",a=>{a.preventDefault(),r=a}),e.getElementById("addToHome").addEventListener("click",a=>{a.preventDefault(),r?(r.prompt(),r.userChoice.then(a=>{"accepted"===a.outcome||alert("Instalação do PWA recusada."),r=null})):alert("Instalação do PWA indisponível."),m.classList.remove("active"),o.classList.remove("active")}),e.getElementById("palpitesButton").addEventListener("click",a=>{a.preventDefault(),window.open("/palpites","_blank"),m.classList.remove("active"),o.classList.remove("active")}),e.getElementById("casinoButton").addEventListener("click",a=>{a.preventDefault(),confirm("Esta versão do Aplicativo não é compatível com os jogos do Cassino, clique OK para usar uma versão compatível!")&&window.location.href="https://app.acertos.club/pr/fC7hpda9",m.classList.remove("active"),o.classList.remove("active")}),e.querySelectorAll(".menu-item").forEach(a=>a.addEventListener("click",()=>{m.classList.remove("active"),o.classList.remove("active")}));"serviceWorker"in navigator&&navigator.serviceWorker.register("/sw.js",{scope:"/"}).catch(()=>{});
     </script>
 </body>
 </html>
