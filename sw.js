@@ -4,12 +4,14 @@ self.addEventListener('install', (event) => {
             return cache.addAll([
                 '/',
                 '/manifest.json',
+                '/icons/favicon32.webp',
+                '/icons/favicon180.webp',
+                '/icons/favicon16.webp',
+                '/icons/favicon.ico',
                 '/icons/pwa.svg',
                 '/icons/whats.svg',
                 '/icons/bicho.svg',
                 '/icons/casino.svg',
-                '/cards/acertosclub.webp',
-                '/cards/aguiaoficial.webp',
                 '/offline.html'
             ]);
         }).then(() => self.skipWaiting())
