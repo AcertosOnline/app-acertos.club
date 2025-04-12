@@ -34,15 +34,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = event.request.url;
     if (url.includes('app.acertos.club')) {
-        // Network-first for iframe content
         event.respondWith(
             fetch(event.request).catch(() => caches.match('/offline.html'))
         );
     } else if (url.includes('chrome-extension') || event.request.method !== 'GET') {
-        // Bypass caching for extensions and non-GET requests
         event.respondWith(fetch(event.request));
     } else {
-        // Cache-first for static assets
         event.respondWith(
             caches.match(event.request).then((response) => {
                 return response || fetch(event.request).then((fetchResponse) => {
